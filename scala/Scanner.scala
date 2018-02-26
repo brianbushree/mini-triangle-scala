@@ -3,7 +3,6 @@ import scala.collection.mutable.ArrayBuffer
 import java.lang.StringBuilder
 
 object Token {
-	// Token Constants
 	val TK_IDENTIFIER: Int  = 0
 	val TK_INTLITERAL: Int  = 1
 	val TK_OPERATOR: Int    = 2
@@ -116,13 +115,14 @@ class Scanner (
 		token
 	}
 
+	/* Regex helpers */
 	val Whitespace = "(\\s)".r
 	val Letter = "([a-zA-Z])".r
 	val Digit = "(\\d)".r
-
 	val Special = "([~\\(\\);])".r
 	val Operators = """([+-\\*/<>=\\])""".r
 
+	/* Match/consume a token */
 	def match_token(c : Char): Token = c match {
 		case Whitespace(c) => char_take();null
 		case '!' => comment()
@@ -134,6 +134,7 @@ class Scanner (
 		case _ => throw new ScannerError(char_pos(), char_current()); null
 	}
 
+	/* Take special character */
 	def special(): Token = {
 		var c : Char = char_current()
 		val t : Int = c match {
@@ -147,12 +148,14 @@ class Scanner (
 		new Token(t, 0.toString, char_pos() - 1)
 	}
 
+	/* Take operator */
 	def operators(): Token = {
 		var c : Char = char_current()
 		char_take()
 		new Token(Token.TK_OPERATOR, c.toString, char_pos() - 1)
 	}
 
+	/* Take comment */
 	def comment(): Token = {
 		while (!char_eot() && char_current() != '\n') {
 			char_take()
@@ -161,6 +164,7 @@ class Scanner (
 		null
 	}
 
+	/* Take number */
 	def number(): Token = {
 		val s : StringBuilder = new StringBuilder()
 		var c : Char = char_current()
@@ -172,6 +176,7 @@ class Scanner (
 		new Token(Token.TK_INTLITERAL, s.toString(), char_pos() - s.toString().length)
 	}
 
+	/* Take identifier or keyword */
 	def letter(): Token = {
 		val s : StringBuilder = new StringBuilder()
 		var c : Char = char_current()
@@ -190,6 +195,7 @@ class Scanner (
 		new Token(Token.TK_IDENTIFIER, s.toString(), char_pos() - s.toString().length)
 	}
 
+	/* Take keyword */
 	def keyword(s : String): Token = s match {
 		case "in" => new Token(Token.TK_IN, 0.toString, char_pos() - s.length)
 		case "let" => new Token(Token.TK_LET, 0.toString, char_pos() - s.length)
@@ -201,6 +207,7 @@ class Scanner (
 		case _ => null
 	}
 
+	/* Take ':' OR ':=' */ 
 	def colon(): Token = {
 		char_take()
 		char_current() match {
