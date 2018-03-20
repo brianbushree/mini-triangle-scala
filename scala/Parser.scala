@@ -19,7 +19,8 @@ class Parser (var tokens : ArrayBuffer[Token],
 		if (currentToken.ttype == expect) {
 			acceptCurrent()
 		} else {
-			throw new IllegalArgumentException("expecting ${Token.TOKENS(expect)}, found ${Token.TOKENS(currentToken.ttype)} at pos ${pos}")
+			println(tokens)
+			throw new IllegalArgumentException(s"expecting ${Token.TOKENS(expect)}, found ${Token.TOKENS(currentToken.ttype)} at pos ${pos}\n${currentToken.toString}")
 		}
 	}
 
@@ -27,7 +28,7 @@ class Parser (var tokens : ArrayBuffer[Token],
 		// new Program(new AssignCommand(new SimpleVname(new Identifier("test")), new IntegerExpression(0)))
 		var prog : Program = parseProgram()
 		if (currentToken.ttype != Token.TK_EOT) {
-			throw new IllegalArgumentException("expecting ${Token.TOKENS(TK_EOT)}, found ${Token.TOKENS(currentToken.ttype)} at pos ${pos}")
+			throw new IllegalArgumentException(s"expecting ${Token.TOKENS(Token.TK_EOT)}, found ${Token.TOKENS(currentToken.ttype)} at pos ${pos}")
 		}
 		prog
 	}
@@ -110,7 +111,20 @@ class Parser (var tokens : ArrayBuffer[Token],
 		}
 	}
 
-	def parseExpression(): Expression = currentToken.ttype match {
+	def parseExpression(): Expression = {
+
+		var expr1 : Expression = parseSingleExpression()
+
+		while (currentToken.ttype == Token.TK_OPERATOR) {
+			var op : Operator = parseOperator()
+			var expr2 : Expression = parseSingleExpression()
+			expr1 = new BinaryExpression(expr1, op, expr2)
+		}
+
+		expr1
+	}
+
+	def parseSingleExpression(): Expression = currentToken.ttype match {
 		
 		case Token.TK_INTLITERAL => {
 			var i : Int = parseIntegerLiteral()
@@ -129,12 +143,9 @@ class Parser (var tokens : ArrayBuffer[Token],
 		}
 
 		case _ => {
-			var expr1 : Expression = parseExpression()
-			var op : Operator = parseOperator()
-			var expr2 : Expression = parseExpression()
-			new BinaryExpression(expr1, op, expr2)
+			throw new IllegalArgumentException(s"error parsing command, unexpected ${currentToken.ttype} at position ${pos}")
+			null
 		}
-
 	}
 
 	/* neccessary?? */
@@ -161,7 +172,7 @@ class Parser (var tokens : ArrayBuffer[Token],
 			var iden : Identifier = parseIdentifier()
 			acceptToken(Token.TK_IS)
 			var expr : Expression = parseExpression()
-			new ConstDeclaration(new SimpleVname(iden), expr)
+			new ConstDeclaration(iden, expr)
 		}
 
 		case Token.TK_VAR => {
@@ -169,7 +180,7 @@ class Parser (var tokens : ArrayBuffer[Token],
 			var iden : Identifier = parseIdentifier()
 			acceptToken(Token.TK_COLON)
 			var typeD : TypeDenoter = parseTypeDenoter()
-			new VarDeclaration(new SimpleVname(iden), typeD)
+			new VarDeclaration(iden, typeD)
 		}
 
 		case _ => {

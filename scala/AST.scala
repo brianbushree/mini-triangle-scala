@@ -82,7 +82,7 @@ abstract class Vname () extends AST {
 
 class SimpleVname (iden : Identifier) extends Vname {
 	override def toString: String = {
-		s"${iden.toString}"
+		s"Vname(${iden.toString})"
 	}
 }
 
@@ -90,15 +90,15 @@ abstract class Declaration () extends AST {
 	
 }
 
-class ConstDeclaration (vname : Vname, exp : Expression) extends Declaration {
+class ConstDeclaration (iden : Identifier, exp : Expression) extends Declaration {
 	override def toString: String = {
-		s"ConstDeclaration(${vname.toString},${exp.toString})"
+		s"ConstDeclaration(${iden.toString},${exp.toString})"
 	}
 }
 
-class VarDeclaration (vname : Vname, typeD : TypeDenoter) extends Declaration {
+class VarDeclaration (iden : Identifier, typeD : TypeDenoter) extends Declaration {
 	override def toString: String = {
-		s"VarDeclaration(${vname.toString},${typeD.toString})"
+		s"VarDeclaration(${iden.toString},${typeD.toString})"
 	}
 }
 

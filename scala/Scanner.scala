@@ -204,6 +204,7 @@ class Scanner (
 		case "begin" => new Token(Token.TK_BEGIN, 0.toString, char_pos() - s.length)
 		case "while" => new Token(Token.TK_WHILE, 0.toString, char_pos() - s.length)
 		case "const" => new Token(Token.TK_CONST, 0.toString, char_pos() - s.length)
+		case "do" => new Token(Token.TK_DO, 0.toString, char_pos() - s.length)
 		case _ => null
 	}
 
@@ -246,7 +247,3 @@ class Scanner (
 	def char_eot() : Boolean = eot
 
 }
-
-
-
-
