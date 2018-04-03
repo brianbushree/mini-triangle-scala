@@ -3,7 +3,8 @@ SOURCES = scala/Scanner.scala \
 	scala/ScannerTest.scala \
 	scala/AST.scala \
 	scala/Parser.scala \
-	scala/ParserTest.scala
+	scala/ParserTest.scala \
+	scala/Evaluator.scala
 SC = scalac
 
 compile: $(SOURCES:.scala=.class)
