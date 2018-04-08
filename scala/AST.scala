@@ -12,9 +12,9 @@ abstract class Command () extends AST {
 	
 }
 
-class AssignCommand (val vname : Vname, val exp : Expression) extends Command {
+class AssignCommand (val vname : Vname, val expr : Expression) extends Command {
 	override def toString: String = {
-		s"AssignCommand(${vname.toString},${exp.toString})"
+		s"AssignCommand(${vname.toString},${expr.toString})"
 	}
 }
 
@@ -30,15 +30,15 @@ class SequentialCommand (val cmd1 : Command, val cmd2 : Command) extends Command
 	}
 }
 
-class IfCommand (val exp : Expression, val cmd1 : Command, val cmd2 : Command) extends Command {
+class IfCommand (val expr : Expression, val cmd1 : Command, val cmd2 : Command) extends Command {
 	override def toString: String = {
-		s"IfCommand(${exp.toString},${cmd1.toString},${cmd2.toString})"
+		s"IfCommand(${expr.toString},${cmd1.toString},${cmd2.toString})"
 	}
 }
 
-class WhileCommand (val exp : Expression, val cmd : Command) extends Command {
+class WhileCommand (val expr : Expression, val cmd : Command) extends Command {
 	override def toString: String = {
-		s"WhileCommand(${exp.toString},${cmd.toString})"
+		s"WhileCommand(${expr.toString},${cmd.toString})"
 	}
 }
 
@@ -52,9 +52,9 @@ abstract class Expression () extends AST {
 	
 }
 
-class IntegerExpression (val i : Int) extends Expression {
+class IntegerExpression (val value : Int) extends Expression {
 	override def toString: String = {
-		s"IntegerExpression(${i.toString})"
+		s"IntegerExpression(${value.toString})"
 	}
 }
 
@@ -64,23 +64,23 @@ class VnameExpression (val vname : Vname) extends Expression {
 	}
 }
 
-class UnaryExpression (val op : Operator, val exp : Expression) extends Expression {
+class UnaryExpression (val op : Operator, val expr : Expression) extends Expression {
 	override def toString: String = {
-		s"UnaryExpression(${op.toString},${exp.toString})"
+		s"UnaryExpression(${op.toString},${expr.toString})"
 	}
 }
 
-class BinaryExpression (val exp1 : Expression, val op : Operator, exp2 : Expression) extends Expression {
+class BinaryExpression (val expr1 : Expression, val op : Operator, val expr2 : Expression) extends Expression {
 	override def toString: String = {
-		s"BinaryExpression(${exp1.toString},${op.toString},${exp2.toString})"
+		s"BinaryExpression(${expr1.toString},${op.toString},${expr2.toString})"
 	}
 }
 
-abstract class Vname () extends AST {
+abstract class Vname (val iden : Identifier) extends AST {
 	
 }
 
-class SimpleVname (val iden : Identifier) extends Vname {
+class SimpleVname (iden : Identifier) extends Vname(iden) {
 	override def toString: String = {
 		s"Vname(${iden.toString})"
 	}
@@ -90,9 +90,9 @@ abstract class Declaration () extends AST {
 	
 }
 
-class ConstDeclaration (val iden : Identifier, val exp : Expression) extends Declaration {
+class ConstDeclaration (val iden : Identifier, val expr : Expression) extends Declaration {
 	override def toString: String = {
-		s"ConstDeclaration(${iden.toString},${exp.toString})"
+		s"ConstDeclaration(${iden.toString},${expr.toString})"
 	}
 }
 
@@ -108,11 +108,11 @@ class SequentialDeclaration (val decl1 : Declaration, val decl2 : Declaration) e
 	}
 }
 
-abstract class TypeDenoter extends AST {
+abstract class TypeDenoter (val iden : Identifier) extends AST {
 
 }
 
-class SimpleTypeDenoter (val iden : Identifier) extends TypeDenoter {
+class SimpleTypeDenoter (iden : Identifier) extends TypeDenoter(iden) {
 	override def toString: String = {
 		s"TypeDenoter(${iden.toString})"
 	}
