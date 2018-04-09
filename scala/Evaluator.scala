@@ -50,6 +50,64 @@ object Evaluator {
 		}
 	}
 
+	def main(args: Array[String]): Unit = {
+
+		val progs : ArrayBuffer[String] = ArrayBuffer("""
+				 let
+				   var x: Integer;
+				   var y: Integer;
+				   var z: Integer
+				 in
+				   begin
+					 getint(x);
+					 y := 2;
+					 z := x + y;
+					 putint(z)
+				   end""",
+			  """! Factorial
+				 let var x: Integer;
+					 var fact: Integer
+				 in
+				   begin
+					 getint(x);
+					 if x = 0 then
+						putint(1)
+					 else
+					   begin
+						 fact := 1;
+						 while x > 0 do
+						   begin
+							 fact := fact * x;
+							 x := x - 1
+						   end;
+						 putint(fact)
+					   end
+				   end
+			  """,
+			  """
+			  let
+				var x: Integer;
+				const c ~ 7
+			  in
+				begin
+				  x := 1;
+				  let
+					var x: Integer
+				  in
+					begin
+					  x := c;
+					  putint(x)
+					end;
+				  putint(x)
+				end
+			  """)
+
+		for (p <- progs) {
+			val prog : Program = new Parser(p).parse()
+			new Evaluator(prog).run()
+		}
+	}
+
 }
 
 
@@ -67,7 +125,15 @@ class Evaluator (var tree : Program,
 	}
 
 	def lookup_env(name : String): TypedObject = {
-		env(env.size - 1)(name)
+		var i : Int = 1
+		var o : TypedObject = null
+
+		while(o == null && i <= env.size) {
+			o = env(env.size - i).getOrElse(name, null)
+			i = i+1
+		}
+
+		o
 	}
 
 	def update_env(name : String,
@@ -83,33 +149,35 @@ class Evaluator (var tree : Program,
 		eval_command(tree.cmd)
 	}
 
-	def eval_command(tree : Command) = tree match {
-		case let: LetCommand => {
-			eval_let_command(let)
-		}
+	def eval_command(tree : Command) = {
+		tree match {
+			case let: LetCommand => {
+				eval_let_command(let)
+			}
 
-		case seq: SequentialCommand => {
-			eval_seq_command(seq)
-		}
+			case seq: SequentialCommand => {
+				eval_seq_command(seq)
+			}
 
-		case asn: AssignCommand => {
-			eval_assign_command(asn)
-		}
+			case asn: AssignCommand => {
+				eval_assign_command(asn)
+			}
 
-		case call: CallCommand => {
-			eval_call_command(call)
-		}
+			case call: CallCommand => {
+				eval_call_command(call)
+			}
 
-		case whle: WhileCommand => {
-			eval_while_command(whle)
-		}
+			case whle: WhileCommand => {
+				eval_while_command(whle)
+			}
 
-		case ifcmd: IfCommand => {
-			eval_if_command(ifcmd)
-		}
+			case ifcmd: IfCommand => {
+				eval_if_command(ifcmd)
+			}
 
-		case _ => {
-			println("error")
+			case _ => {
+				println("error")
+			}
 		}
 	}
 
@@ -151,7 +219,7 @@ class Evaluator (var tree : Program,
 	def eval_call_command(tree : CallCommand) {
 		tree.iden.spelling match {
 			case "putint" => {
-				println(eval_expression(tree.expr))
+				println(eval_expression(tree.expr).toInt)
 			}
 
 			case "getint" => {
@@ -249,6 +317,14 @@ class Evaluator (var tree : Program,
 				b.op.op match {
 					case "=" => {
 						new BoolObj(e1.toInt == e2.toInt)
+					}
+
+					case ">" => {
+						new BoolObj(e1.toInt > e2.toInt)
+					}
+
+					case "<" => {
+						new BoolObj(e1.toInt < e2.toInt)
 					}
 
 					case _ => {

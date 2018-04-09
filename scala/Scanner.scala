@@ -205,6 +205,9 @@ class Scanner (
 		case "while" => new Token(Token.TK_WHILE, 0.toString, char_pos() - s.length)
 		case "const" => new Token(Token.TK_CONST, 0.toString, char_pos() - s.length)
 		case "do" => new Token(Token.TK_DO, 0.toString, char_pos() - s.length)
+		case "if" => new Token(Token.TK_IF, 0.toString, char_pos() - s.length)
+		case "then" => new Token(Token.TK_THEN, 0.toString, char_pos() - s.length)
+		case "else" => new Token(Token.TK_ELSE, 0.toString, char_pos() - s.length)
 		case _ => null
 	}
 

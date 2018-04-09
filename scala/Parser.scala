@@ -19,13 +19,11 @@ class Parser (var tokens : ArrayBuffer[Token],
 		if (currentToken.ttype == expect) {
 			acceptCurrent()
 		} else {
-			println(tokens)
 			throw new IllegalArgumentException(s"expecting ${Token.TOKENS(expect)}, found ${Token.TOKENS(currentToken.ttype)} at pos ${pos}\n${currentToken.toString}")
 		}
 	}
 
 	def parse(): Program = {
-		// new Program(new AssignCommand(new SimpleVname(new Identifier("test")), new IntegerExpression(0)))
 		var prog : Program = parseProgram()
 		if (currentToken.ttype != Token.TK_EOT) {
 			throw new IllegalArgumentException(s"expecting ${Token.TOKENS(Token.TK_EOT)}, found ${Token.TOKENS(currentToken.ttype)} at pos ${pos}")
@@ -70,7 +68,7 @@ class Parser (var tokens : ArrayBuffer[Token],
 				}
 
 				case _ => {
-					throw new IllegalArgumentException(s"error parsing command, unexpected ${currentToken.ttype} at position ${pos}")
+					throw new IllegalArgumentException(s"111error parsing command, unexpected ${currentToken.ttype} at position ${pos}")
 					null
 				}
 			}
@@ -106,13 +104,12 @@ class Parser (var tokens : ArrayBuffer[Token],
 			cmd
 		}
 		case _ => {
-			throw new IllegalArgumentException(s"error parsing command, unexpected ${currentToken.ttype} at position ${pos}")
+			throw new IllegalArgumentException(s"222error parsing command, unexpected ${currentToken.ttype} at position ${pos}")
 			null
 		}
 	}
 
 	def parseExpression(): Expression = {
-
 		var expr1 : Expression = parseSingleExpression()
 
 		while (currentToken.ttype == Token.TK_OPERATOR) {
@@ -143,15 +140,10 @@ class Parser (var tokens : ArrayBuffer[Token],
 		}
 
 		case _ => {
-			throw new IllegalArgumentException(s"error parsing command, unexpected ${currentToken.ttype} at position ${pos}")
+			throw new IllegalArgumentException(s"error parsing expression, unexpected ${currentToken.ttype} at position ${pos}")
 			null
 		}
 	}
-
-	/* neccessary?? */
-	// def parsePrimaryExpression(): Expression = {
-	// 	null
-	// }
 
 	def parseDeclaration(): Declaration = {
 		var decl1 : Declaration = parseSingleDeclaration()
